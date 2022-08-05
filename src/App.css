@@ -1,4 +1,4 @@
-body {
-  margin: 100px;
-  height: 3000px;
+html {
+  background-image: url("../public/images/backgroundsvg.svg");
+  background-size: cover;
 }
