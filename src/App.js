@@ -6,7 +6,7 @@ import { languageDir } from "./general";
 export const AppContext = React.createContext();
 
 function App() {
-  const lang = "turkish";
+  const lang = "arabic";
   const langDir = languageDir(lang);
   return (
     <div>
