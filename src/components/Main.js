@@ -3,9 +3,13 @@ import PropTypes from "prop-types";
 import { RiCloseLine } from "react-icons/ri";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import style from "./Main.module.scss";
-import Samplepage from "../pages/sample";
+// import Samplepage from "../pages/sample";
 import { AppContext } from "../App";
 import { translatedMessage } from "../general";
+import { MdMenu } from "react-icons/md";
+import Menu from "./Menu";
+import { toggleShowMenu } from "./MenuReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 function useOutsideAlerter(ref, callback) {
   useEffect(() => {
@@ -29,9 +33,19 @@ const Main = (props) => {
   const [closingTabs, setClosingTabs] = useState([]);
   const [showMoreItems, setShowMoreItems] = useState(false);
   const moreItems = useRef(null);
+  const menuState = useSelector((state) => state.menu);
+  const dispatch = useDispatch();
+
   useOutsideAlerter(moreItems, () => {
     setShowMoreItems(false);
   });
+
+  const componentStyle = {
+    position: "relative",
+    right: langDir === "ltr" ? "auto" : "0px",
+    left: langDir === "ltr" ? "280px" : "auto",
+    width: "calc( 100% - 280px )",
+  };
 
   const tabsStyle = {
     direction: langDir,
@@ -57,17 +71,23 @@ const Main = (props) => {
     setActiveTabs([...activeTabs, tab.id]);
     setTabs([...tabs, tab]);
   };
-  var timer = useRef(null);
+
   const closeTab = (tab, e) => {
     e.stopPropagation();
     setActiveTabs([...activeTabs.filter((t) => t !== tab.id)]);
     setTabs(tabs.filter((t) => t.id !== tab.id));
     setClosingTabs([...closingTabs, {}]);
-    window.clearTimeout(timer);
-    timer = setTimeout(() => {
-      setClosingTabs([]);
-    }, 2000);
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setClosingTabs([]);
+    }, 1500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  });
 
   const handleShowMoreItems = () => {
     setShowMoreItems(true);
@@ -131,10 +151,15 @@ const Main = (props) => {
   };
 
   return (
-    <>
-      <div className="Menu" style={{ height: "30px" }}>
+    <div style={menuState.pinned ? componentStyle : {}}>
+      {menuState.pinned || menuState.showMenu ? <Menu /> : ""}
+      <header style={{ height: "30px", direction: langDir }}>
+        <MdMenu
+          className={style.menuIcon}
+          onClick={() => dispatch(toggleShowMenu())}
+        />
         <button onClick={() => openTab({ title: "test" })}>Add New Tab</button>
-      </div>
+      </header>
       <div className={style.tabs} style={tabsStyle}>
         {tabs.map((tab) => {
           return (
@@ -202,7 +227,7 @@ const Main = (props) => {
         )}
       </div>
       {/* <Samplepage /> */}
-    </>
+    </div>
   );
 };
 
