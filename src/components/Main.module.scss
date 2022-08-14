@@ -96,3 +96,45 @@ header {
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .tabs {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background-image: url("../../public/images/bg.png");
+    background-position-x: right;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 10px;
+
+    > div {
+      width: 90%;
+      max-width: 300px;
+      padding-bottom: 5px;
+      border-bottom: solid 1px white;
+
+      .back {
+        color: white;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+
+        span {
+          font-size: 18px;
+        }
+      }
+    }
+
+    .tab {
+      width: 90%;
+      max-width: 300px;
+      border-radius: 8px !important;
+      height: 30px;
+    }
+  }
+}
