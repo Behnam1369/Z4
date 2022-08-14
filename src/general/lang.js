@@ -7,12 +7,12 @@ export const languages = {
   arabic: {
     direction: "rtl",
     original: "العربیه",
-    defaultFont: "Droid Arabic Kufi",
+    defaultFont: "Kufi",
   },
   persian: {
     direction: "rtl",
     original: "فارسی",
-    defaultFont: "IranSans",
+    defaultFont: "IranSansLight",
   },
   spanish: {
     direction: "ltr",
