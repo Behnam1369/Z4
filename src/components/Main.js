@@ -10,6 +10,7 @@ import { MdMenu } from "react-icons/md";
 import Menu from "./Menu";
 import { toggleShowMenu } from "./MenuReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
 function useOutsideAlerter(ref, callback) {
   useEffect(() => {
@@ -28,7 +29,8 @@ function useOutsideAlerter(ref, callback) {
 const Main = (props) => {
   const [tabs, setTabs] = useState(props.tabs);
   const [maxId, setMaxId] = useState(0);
-  const { lang, langDir } = useContext(AppContext);
+  const { lang, langDir, isMobile, langFont } = useContext(AppContext);
+  const [showTabs, setShowTabs] = useState(false);
   const [activeTabs, setActiveTabs] = useState([]);
   const [closingTabs, setClosingTabs] = useState([]);
   const [showMoreItems, setShowMoreItems] = useState(false);
@@ -87,7 +89,7 @@ const Main = (props) => {
     return () => {
       clearTimeout(timer);
     };
-  });
+  }, [tabs]);
 
   const handleShowMoreItems = () => {
     setShowMoreItems(true);
@@ -152,7 +154,8 @@ const Main = (props) => {
 
   return (
     <div style={menuState.pinned ? componentStyle : {}}>
-      {menuState.pinned || menuState.showMenu ? <Menu /> : ""}
+      {/* {menuState.pinned || menuState.showMenu ? <Menu /> : ""} */}
+      <Menu onShowTabs={() => setShowTabs(true)} />
       <header style={{ height: "30px", direction: langDir }}>
         <MdMenu
           className={style.menuIcon}
@@ -160,72 +163,89 @@ const Main = (props) => {
         />
         <button onClick={() => openTab({ title: "test" })}>Add New Tab</button>
       </header>
-      <div className={style.tabs} style={tabsStyle}>
-        {tabs.map((tab) => {
-          return (
+      {(!isMobile || (isMobile && showTabs)) && (
+        <div className={style.tabs} style={tabsStyle}>
+          {isMobile && showTabs && (
+            <div>
+              <span
+                className={style.back}
+                onClick={() => setShowTabs(false)}
+                style={{ fontFamily: langFont }}
+              >
+                {langDir === "ltr" ? <BsChevronLeft /> : <BsChevronRight />}{" "}
+                {translatedMessage(7, lang)}
+                {/*Back*/}
+              </span>
+            </div>
+          )}
+          {tabs.map((tab) => {
+            return (
+              <div
+                key={tab.id}
+                className={`${style.tab} ${tab.active ? style.active : ""}`}
+                onClick={() => {
+                  tabClicked(tab.id);
+                }}
+                style={{
+                  ...tabStyle,
+                  visibility: tab.hidden ? "hidden" : "visible",
+                }}
+              >
+                {tab.title}
+                <RiCloseLine
+                  onClick={(e) => closeTab(tab, e)}
+                  className={style.closeTab}
+                />
+              </div>
+            );
+          })}
+          {closingTabs.map((el, i) => {
+            return (
+              <div
+                key={i}
+                className={`${style.tab}`}
+                style={{ visibility: "hidden" }}
+              ></div>
+            );
+          })}
+          {!isMobile && (
+            <BiDotsVerticalRounded
+              className={style.more}
+              style={moreStyle}
+              onClick={() => handleShowMoreItems()}
+            />
+          )}
+          {showMoreItems && (
             <div
-              key={tab.id}
-              className={`${style.tab} ${tab.active ? style.active : ""}`}
-              onClick={() => {
-                tabClicked(tab.id);
-              }}
-              style={{
-                ...tabStyle,
-                visibility: tab.hidden ? "hidden" : "visible",
-              }}
+              ref={moreItems}
+              className={style.moreItems}
+              style={moreItemsStyle}
             >
-              {tab.title}
-              <RiCloseLine
-                onClick={(e) => closeTab(tab, e)}
-                className={style.closeTab}
-              />
+              <div className={style.moreItem} onClick={() => handleCloseAll()}>
+                {translatedMessage(1, lang)}
+              </div>
+              <div
+                className={style.moreItem}
+                onClick={() => handleCloseAllButThis()}
+              >
+                {translatedMessage(2, lang)}
+              </div>
+              <div
+                className={style.moreItem}
+                onClick={() => handleCloseNextTabs()}
+              >
+                {translatedMessage(3, lang)}
+              </div>
+              <div
+                className={style.moreItem}
+                onClick={() => handleClosePreviousTabs()}
+              >
+                {translatedMessage(4, lang)}
+              </div>
             </div>
-          );
-        })}
-        {closingTabs.map((el, i) => {
-          return (
-            <div
-              key={i}
-              className={`${style.tab}`}
-              style={{ visibility: "hidden" }}
-            ></div>
-          );
-        })}
-        <BiDotsVerticalRounded
-          className={style.more}
-          style={moreStyle}
-          onClick={() => handleShowMoreItems()}
-        />
-        {showMoreItems && (
-          <div
-            ref={moreItems}
-            className={style.moreItems}
-            style={moreItemsStyle}
-          >
-            <div className={style.moreItem} onClick={() => handleCloseAll()}>
-              {translatedMessage(1, lang)}
-            </div>
-            <div
-              className={style.moreItem}
-              onClick={() => handleCloseAllButThis()}
-            >
-              {translatedMessage(2, lang)}
-            </div>
-            <div
-              className={style.moreItem}
-              onClick={() => handleCloseNextTabs()}
-            >
-              {translatedMessage(3, lang)}
-            </div>
-            <div
-              className={style.moreItem}
-              onClick={() => handleClosePreviousTabs()}
-            >
-              {translatedMessage(4, lang)}
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
       {/* <Samplepage /> */}
     </div>
   );
