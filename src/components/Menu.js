@@ -17,9 +17,20 @@ function Menu(props) {
   const [searchValue, setSearchValue] = useState("");
 
   const navStyle = {
-    left: langDir === "ltr" ? "0" : "auto",
-    right: langDir === "ltr" ? "auto" : "0",
-    display: menuState.pinned || menuState.showMenu ? "block" : "none",
+    left:
+      langDir === "rtl"
+        ? "auto"
+        : menuState.pinned || menuState.showMenu
+        ? "0"
+        : "-280px",
+    right:
+      langDir === "ltr"
+        ? "auto"
+        : menuState.pinned || menuState.showMenu
+        ? "0"
+        : "-280px",
+    width: menuState.pinned || menuState.showMenu ? "280px" : "0",
+    dis: menuState.pinned || menuState.showMenu ? "280px" : "0",
     fontFamily: langFont,
     fontSize: "14px",
   };
@@ -79,7 +90,9 @@ function Menu(props) {
             />
           )}
         </div>
-        {/* {menuItems.map((el) => <MenuItem key={el.id} title={el.title}/>)} */}
+        {/* {menuItems.map((el) => (
+          <MenuItem key={el.id} title={el.title} />
+        ))} */}
         {isMobile && (
           <button
             className={style.showTabs}
@@ -168,9 +181,9 @@ const renderMenuItem = (
 };
 
 const getData = async (lang) => {
-  const response = await fetch(host + `/menu_items/lang/${lang}`)
+  const response = await fetch(host + `/menu_items_lang/${lang}`)
     .then((response) => response.json())
-    .then((data) => data);
+    .then((res) => res.data);
   return response;
 };
 
